@@ -38,20 +38,18 @@ void loop() {
   delay(2000);
 
   unsigned long currentTime{millis()};
-  int soilMoistureA;
-  int soilMoistureB;
   
   // Returns true if 'soilCheckPeriod' has elapsed since last check
   if (sensorOne.moistureInterval(soilCheckPeriod, currentTime, previousTime))
   {
     int x;
     if (sensorOne.readSoil() <= 50 && sensorTwo.readSoil() <= 50)
-   {
+    {
       x = 1;
     }
     else if (sensorOne.readSoil() <= 50)
     {
-     x = 2;
+      x = 2;
     }
     else if (sensorTwo.readSoil() <= 50)
     {
