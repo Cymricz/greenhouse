@@ -42,38 +42,26 @@ void loop() {
   // Returns true if 'soilCheckPeriod' has elapsed since last check
   if (sensorOne.moistureInterval(soilCheckPeriod, currentTime, previousTime))
   {
+    digitalWrite(powerSwitch, HIGH); // send power to sensors
     int x;
     if (sensorOne.readSoil() <= 50 && sensorTwo.readSoil() <= 50)
     {
-      x = 1;
+      digitalWrite(dummyLight, LOW);
+      digitalWrite(redLedA, HIGH);
+      digitalWrite(redLedB, HIGH);
     }
     else if (sensorOne.readSoil() <= 50)
     {
-      x = 2;
+      digitalWrite(dummyLight, LOW);
+      digitalWrite(redLedA, HIGH);
     }
     else if (sensorTwo.readSoil() <= 50)
     {
-      x = 3;
-    }
-
-    switch (x)
-    {
-      case 1:
-      digitalWrite(dummyLight, LOW);
-      digitalWrite(redLedA, HIGH);
-      digitalWrite(redLedB, HIGH);
-      break
-
-      case 2:
-      digitalWrite(dummyLight, LOW);
-      digitalWrite(redLedA, HIGH);
-      break
-
-      case 3:
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedB, HIGH);
-      break
     }
+    digitalWrite(powerSwitch, LOW); // remove power from sensors
+    currentTime = previousTime; // reset currentTime for the next check
   }
   
   float h = dht.readHumidity();
