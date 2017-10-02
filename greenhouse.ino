@@ -44,21 +44,37 @@ void loop() {
   // Returns true if 'soilCheckPeriod' has elapsed since last check
   if (sensorOne.moistureInterval(soilCheckPeriod, currentTime, previousTime))
   {
-    digitalWrite(powerSwitch, HIGH); // give moisture sensors power
-    soilMoistureA = sensorOne.readSoil();
-    soilMoistureB = sensorTwo.readSoil();
-    digitalWrite(powerSwitch, LOW); // kill power to moisture sensors
-    previousTime = currentTime; // update 'previousTime' for next check
-    
-    if (soilMoistureA <= 50) // check if soil moisture value is at or below watering point
+    int x;
+    if (sensorOne.readSoil() <= 50 && sensorTwo.readSoil() <= 50)
+   {
+      x = 1;
+    }
+    else if (sensorOne.readSoil() <= 50)
     {
+     x = 2;
+    }
+    else if (sensorTwo.readSoil() <= 50)
+    {
+      x = 3;
+    }
+
+    switch (x)
+    {
+      case 1:
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedA, HIGH);
-    }
-    if (soilMoistureB <= 50) // check if soil moisture value is at or below watering point
-    {
+      digitalWrite(redLedB, HIGH);
+      break
+
+      case 2:
+      digitalWrite(dummyLight, LOW);
+      digitalWrite(redLedA, HIGH);
+      break
+
+      case 3:
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedB, HIGH);
+      break
     }
   }
   
