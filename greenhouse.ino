@@ -13,11 +13,11 @@ SoilMoisture sensorTwo(A1);
 DHT dht(DHTPIN,DHTTYPE);    // initialize temp sensor
 Servo alphaServo;
   
-unsigned long previousTime{0}; // two global variables for timing soil
+unsigned long previousTime{0};                  // two global variables for timing soil
 const unsigned long soilCheckPeriod{86400000};  // moisture readings 
 const int powerSwitch{2}; // set pin for transistor to sensors
-const int redLedA{7}; // set pin for led indicator light on sensor A
-const int redLedB{8}; // set pin for led indicator light on sensor B
+const int redLedA{7};     // set pin for led indicator light on sensor A
+const int redLedB{8};     // set pin for led indicator light on sensor B
 const int dummyLight{12}; // set pin for green 'all-good' indicator led
 
 void setup() {
@@ -25,7 +25,7 @@ void setup() {
   dht.begin();
   pinMode(powerSwitch, OUTPUT); // controls transistor to switch power to moisture sensors
   digitalWrite(powerSwitch, LOW);
-  pinMode(redLedA, OUTPUT); // LED indicator if soil needs watering
+  pinMode(redLedA, OUTPUT);     // LED indicator if soil needs watering
   digitalWrite(redLedA, LOW);
   pinMode(redLedB, OUTPUT);
   digitalWrite(redLedB, LOW);
@@ -43,25 +43,29 @@ void loop() {
   if (sensorOne.moistureInterval(soilCheckPeriod, currentTime, previousTime))
   {
     digitalWrite(powerSwitch, HIGH); // send power to sensors
-    int x;
-    if (sensorOne.readSoil() <= 50 && sensorTwo.readSoil() <= 50)
+  
+    while (sensorOne.readSoil() <= 50 && sensorTwo.readSoil() <= 50)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedA, HIGH);
       digitalWrite(redLedB, HIGH);
     }
-    else if (sensorOne.readSoil() <= 50)
+    while (sensorOne.readSoil() <= 50)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedA, HIGH);
     }
-    else if (sensorTwo.readSoil() <= 50)
+    while (sensorTwo.readSoil() <= 50)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedB, HIGH);
     }
+    digitalWrite(dummyLight, HIGH); // If we reach this line, then any sensor giving us a 
+    digitalWrite(redLedA, LOW);     // low moisture reading has been watered, so we reset
+    digitalWrite(redLedB, LOW);     // all the indicator LEDs.
+    
     digitalWrite(powerSwitch, LOW); // remove power from sensors
-    currentTime = previousTime; // reset currentTime for the next check
+    previousTime = currentTime; // reset previousTime for the next check
   }
   
   float h = dht.readHumidity();
@@ -72,9 +76,6 @@ void loop() {
     Serial.println("Failed to read from DHT sensor!");
     return;
   }
-  bool lidOpen = true;
- 
-  
-  
+    
 
 }
