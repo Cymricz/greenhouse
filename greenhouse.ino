@@ -29,33 +29,57 @@ void setup() {
   digitalWrite(redLedA, LOW);
   pinMode(redLedB, OUTPUT);
   digitalWrite(redLedB, LOW);
-  pinMode(dummyLight, HIGH);
+  pinMode(dummyLight, OUTPUT);
+  digitalWrite(dummyLight, HIGH);
   alphaServo.attach(9);
   
 }
 
 void loop() {
   delay(2000);
-
   unsigned long currentTime{millis()};
+  
+  if (Serial.available())
+  {
+    char ch = Serial.read();
+    if (ch = 1)
+    {
+      // force program to check moisture regardless of time
+      goto moisture;
+    }
+  }
   
   // Returns true if 'soilCheckPeriod' has elapsed since last check
   if (sensorOne.moistureInterval(soilCheckPeriod, currentTime, previousTime))
   {
+    moisture:
     digitalWrite(powerSwitch, HIGH); // send power to sensors
-  
-    while (sensorOne.readSoil() <= 50 && sensorTwo.readSoil() <= 50)
+    
+    /*
+     * Using a while loop turned out to be the best way I saw to check for low moisture and 
+     * then keep the indicators on until the plant in question was watered. This method means
+     * the sensors will continue to receive power until everything has been watered, which
+     * is counter to my hope of keeping the sensor unpowered as much as possible to prevent
+     * corrosion, but I couldn't see a better solution to the indicator LEDs.
+     */
+    int moistureA = sensorOne.readSoil();
+    int moistureB = sensorTwo.readSoil();
+        
+    sensorOne.printReading(moistureA);
+    sensorTwo.printReading(moistureB);
+    
+    while (moistureA <= 50 && moistureB <= 50)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedA, HIGH);
       digitalWrite(redLedB, HIGH);
     }
-    while (sensorOne.readSoil() <= 50)
+    while (moistureA <= 50)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedA, HIGH);
     }
-    while (sensorTwo.readSoil() <= 50)
+    while (moistureB <= 50)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedB, HIGH);
@@ -65,7 +89,7 @@ void loop() {
     digitalWrite(redLedB, LOW);     // all the indicator LEDs.
     
     digitalWrite(powerSwitch, LOW); // remove power from sensors
-    previousTime = currentTime; // reset previousTime for the next check
+    previousTime = currentTime; // update previousTime for the next check
   }
   
   float h = dht.readHumidity();
