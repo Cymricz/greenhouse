@@ -29,8 +29,9 @@ void setup() {
   digitalWrite(redLedA, LOW);
   pinMode(redLedB, OUTPUT);
   digitalWrite(redLedB, LOW);
-  pinMode(dummyLight, HIGH);
-  alphaServo.attach(9);
+  pinMode(dummyLight, OUTPUT);
+  digitalWrite(dummyLight, HIGH);
+  // alphaServo.attach(9);
   
 }
 
@@ -43,29 +44,32 @@ void loop() {
   if (sensorOne.moistureInterval(soilCheckPeriod, currentTime, previousTime))
   {
     digitalWrite(powerSwitch, HIGH); // send power to sensors
-  
-    while (sensorOne.readSoil() <= 50 && sensorTwo.readSoil() <= 50)
+
+    // changed test to check for average of two sensors
+    while ((sensorOne.readSoil() + sensorTwo.readSoil()) / 2 < 50 )
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedA, HIGH);
-      digitalWrite(redLedB, HIGH);
+      // digitalWrite(redLedB, HIGH);
     }
-    while (sensorOne.readSoil() <= 50)
+    /*
+    while (sensorOne.readSoil() <= 30)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedA, HIGH);
     }
-    while (sensorTwo.readSoil() <= 50)
+    while (sensorTwo.readSoil() <= 30)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedB, HIGH);
     }
+    */
     digitalWrite(dummyLight, HIGH); // If we reach this line, then any sensor giving us a 
     digitalWrite(redLedA, LOW);     // low moisture reading has been watered, so we reset
-    digitalWrite(redLedB, LOW);     // all the indicator LEDs.
+    // digitalWrite(redLedB, LOW);     // all the indicator LEDs.
     
     digitalWrite(powerSwitch, LOW); // remove power from sensors
-    previousTime = currentTime; // reset previousTime for the next check
+    previousTime = currentTime;     // reset previousTime for the next check
   }
   
   float h = dht.readHumidity();
@@ -77,5 +81,4 @@ void loop() {
     return;
   }
     
-
 }
