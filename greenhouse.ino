@@ -33,6 +33,8 @@ void setup() {
   digitalWrite(dummyLight, HIGH);
   pinMode(9, OUTPUT);
   digitalWrite(9, LOW);
+  pinMode(3, OUTPUT);
+  digitalWrite(3, LOW);
   // alphaServo.attach(9);
   
 }
@@ -40,7 +42,8 @@ void setup() {
 void loop() {
   delay(2000);
   unsigned long currentTime{millis()};
-  
+  digitalWrite(9, HIGH); 
+  digitalWrite(3, HIGH);
   if (Serial.available())
   {
     char ch = Serial.read();
