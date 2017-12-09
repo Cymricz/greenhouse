@@ -14,7 +14,7 @@ DHT dht(DHTPIN,DHTTYPE);    // initialize temp sensor
 Servo alphaServo;
   
 unsigned long previousTime{0};                  // two global variables for timing soil
-const unsigned long soilCheckPeriod{86400000};  // moisture readings 
+const unsigned long soilCheckPeriod{43200000};  // moisture readings 
 const int powerSwitch{2}; // set pin for transistor to sensors
 const int redLedA{7};     // set pin for led indicator light on sensor A
 const int redLedB{8};     // set pin for led indicator light on sensor B
@@ -31,7 +31,9 @@ void setup() {
   digitalWrite(redLedB, LOW);
   pinMode(dummyLight, OUTPUT);
   digitalWrite(dummyLight, HIGH);
-  alphaServo.attach(9);
+  pinMode(9, OUTPUT);
+  digitalWrite(9, LOW);
+  // alphaServo.attach(9);
   
 }
 
@@ -46,6 +48,10 @@ void loop() {
     {
       // force program to check moisture regardless of time
       goto moisture;
+    }
+    if (ch = 9)
+    {
+      digitalWrite(9, HIGH);
     }
   }
   
@@ -68,18 +74,18 @@ void loop() {
     sensorOne.printReading(moistureA);
     sensorTwo.printReading(moistureB);
     
-    while (moistureA <= 50 && moistureB <= 50)
+    while (sensorOne.readSoil() <= 50 && sensorTwo.readSoil() <= 50)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedA, HIGH);
       digitalWrite(redLedB, HIGH);
     }
-    while (moistureA <= 50)
+    while (sensorOne.readSoil() <= 50)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedA, HIGH);
     }
-    while (moistureB <= 50)
+    while (sensorTwo.readSoil() <= 50)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedB, HIGH);
