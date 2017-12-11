@@ -31,10 +31,13 @@ void setup() {
   digitalWrite(redLedB, LOW);
   pinMode(dummyLight, OUTPUT);
   digitalWrite(dummyLight, HIGH);
+<<<<<<< HEAD
   pinMode(9, OUTPUT);
   digitalWrite(9, LOW);
   pinMode(3, OUTPUT);
   digitalWrite(3, LOW);
+=======
+>>>>>>> f80e4aac296dd19a3a300738a40a1c91a8b62066
   // alphaServo.attach(9);
   
 }
@@ -63,6 +66,7 @@ void loop() {
   {
     moisture:
     digitalWrite(powerSwitch, HIGH); // send power to sensors
+<<<<<<< HEAD
     
     /*
      * Using a while loop turned out to be the best way I saw to check for low moisture and 
@@ -78,27 +82,38 @@ void loop() {
     sensorTwo.printReading(moistureB);
     
     while (sensorOne.readSoil() <= 50 && sensorTwo.readSoil() <= 50)
+=======
+
+    // changed test to check for average of two sensors
+    while ((sensorOne.readSoil() + sensorTwo.readSoil()) / 2 < 50 )
+>>>>>>> f80e4aac296dd19a3a300738a40a1c91a8b62066
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedA, HIGH);
-      digitalWrite(redLedB, HIGH);
+      // digitalWrite(redLedB, HIGH);
     }
-    while (sensorOne.readSoil() <= 50)
+    /*
+    while (sensorOne.readSoil() <= 30)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedA, HIGH);
     }
-    while (sensorTwo.readSoil() <= 50)
+    while (sensorTwo.readSoil() <= 30)
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedB, HIGH);
     }
+    */
     digitalWrite(dummyLight, HIGH); // If we reach this line, then any sensor giving us a 
     digitalWrite(redLedA, LOW);     // low moisture reading has been watered, so we reset
-    digitalWrite(redLedB, LOW);     // all the indicator LEDs.
+    // digitalWrite(redLedB, LOW);     // all the indicator LEDs.
     
     digitalWrite(powerSwitch, LOW); // remove power from sensors
+<<<<<<< HEAD
     previousTime = currentTime; // update previousTime for the next check
+=======
+    previousTime = currentTime;     // reset previousTime for the next check
+>>>>>>> f80e4aac296dd19a3a300738a40a1c91a8b62066
   }
   
   float h = dht.readHumidity();
@@ -110,5 +125,4 @@ void loop() {
     return;
   }
     
-
 }
