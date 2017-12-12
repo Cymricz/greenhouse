@@ -52,8 +52,7 @@ void setup() {
 
 void loop() {
   delay(2000);
-  Serial.println(hourFormat12());  // Test to check output of Time functions
-  
+    
   setLedArrays();
   
   unsigned long currentTime{millis()};
