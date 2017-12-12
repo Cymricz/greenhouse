@@ -1,6 +1,9 @@
 // Sketch to run a small, semi-automated greenhouse
 // Written by Cymric Cramer Sept 2017
 
+#include <Time.h>
+#include <TimeLib.h>
+
 #include "SoilMoisture.h"
 #include "DHT.h"
 #include "Servo.h"
@@ -19,6 +22,10 @@ const int powerSwitch{2}; // set pin for transistor to sensors
 const int redLedA{7};     // set pin for led indicator light on sensor A
 const int redLedB{8};     // set pin for led indicator light on sensor B
 const int dummyLight{12}; // set pin for green 'all-good' indicator led
+const int redArray{3};
+const int blueArray{5};
+const int uvArray{6};
+const int greenArray{9};
 
 void setup() {
   Serial.begin(9600);
@@ -31,22 +38,26 @@ void setup() {
   digitalWrite(redLedB, LOW);
   pinMode(dummyLight, OUTPUT);
   digitalWrite(dummyLight, HIGH);
-<<<<<<< HEAD
-  pinMode(9, OUTPUT);
-  digitalWrite(9, LOW);
-  pinMode(3, OUTPUT);
-  digitalWrite(3, LOW);
-=======
->>>>>>> f80e4aac296dd19a3a300738a40a1c91a8b62066
+  pinMode(redArray, OUTPUT);
+  digitalWrite(redArray, LOW);
+  pinMode(blueArray, OUTPUT);
+  digitalWrite(blueArray, LOW);
+  pinMode(uvArray, OUTPUT);
+  digitalWrite(uvArray, LOW);
+  pinMode(greenArray, OUTPUT);
+  digitalWrite(greenArray, LOW);
   // alphaServo.attach(9);
   
 }
 
 void loop() {
   delay(2000);
+  Serial.println(hourFormat12());  // Test to check output of Time functions
+  
+  setLedArrays();
+  
   unsigned long currentTime{millis()};
-  digitalWrite(9, HIGH); 
-  digitalWrite(3, HIGH);
+  
   if (Serial.available())
   {
     char ch = Serial.read();
@@ -55,19 +66,14 @@ void loop() {
       // force program to check moisture regardless of time
       goto moisture;
     }
-    if (ch = 9)
-    {
-      digitalWrite(9, HIGH);
-    }
+    
   }
   
   // Returns true if 'soilCheckPeriod' has elapsed since last check
   if (sensorOne.moistureInterval(soilCheckPeriod, currentTime, previousTime))
   {
     moisture:
-    digitalWrite(powerSwitch, HIGH); // send power to sensors
-<<<<<<< HEAD
-    
+    digitalWrite(powerSwitch, HIGH); // send power to sensors    
     /*
      * Using a while loop turned out to be the best way I saw to check for low moisture and 
      * then keep the indicators on until the plant in question was watered. This method means
@@ -80,13 +86,9 @@ void loop() {
         
     sensorOne.printReading(moistureA);
     sensorTwo.printReading(moistureB);
-    
-    while (sensorOne.readSoil() <= 50 && sensorTwo.readSoil() <= 50)
-=======
 
     // changed test to check for average of two sensors
     while ((sensorOne.readSoil() + sensorTwo.readSoil()) / 2 < 50 )
->>>>>>> f80e4aac296dd19a3a300738a40a1c91a8b62066
     {
       digitalWrite(dummyLight, LOW);
       digitalWrite(redLedA, HIGH);
@@ -106,14 +108,11 @@ void loop() {
     */
     digitalWrite(dummyLight, HIGH); // If we reach this line, then any sensor giving us a 
     digitalWrite(redLedA, LOW);     // low moisture reading has been watered, so we reset
-    // digitalWrite(redLedB, LOW);     // all the indicator LEDs.
+    // digitalWrite(redLedB, LOW);  // all the indicator LEDs.
     
     digitalWrite(powerSwitch, LOW); // remove power from sensors
-<<<<<<< HEAD
-    previousTime = currentTime; // update previousTime for the next check
-=======
-    previousTime = currentTime;     // reset previousTime for the next check
->>>>>>> f80e4aac296dd19a3a300738a40a1c91a8b62066
+    previousTime = currentTime;     // update previousTime for the next check
+    
   }
   
   float h = dht.readHumidity();
@@ -126,3 +125,26 @@ void loop() {
   }
     
 }
+
+void setLedArrays()
+{
+  if (isAM())
+  {
+    digitalWrite(redArray, HIGH);
+    digitalWrite(blueArray, HIGH);
+    digitalWrite(uvArray, HIGH);
+    digitalWrite(greenArray, HIGH);  
+  }
+  else if (isPM())
+  {
+    digitalWrite(redArray, LOW);
+    digitalWrite(blueArray, LOW);
+    digitalWrite(uvArray, LOW);
+    digitalWrite(greenArray, LOW);
+  }
+  else
+  {
+    Serial.println("Time error");
+  }
+}
+
