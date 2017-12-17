@@ -127,14 +127,14 @@ void loop() {
 
 void setLedArrays()
 {
-  if (isAM())
+  if (isPM())
   {
     digitalWrite(redArray, HIGH);
     digitalWrite(blueArray, HIGH);
     digitalWrite(uvArray, HIGH);
     digitalWrite(greenArray, HIGH);  
   }
-  else if (isPM())
+  else if (isAM())
   {
     digitalWrite(redArray, LOW);
     digitalWrite(blueArray, LOW);
